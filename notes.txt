@@ -1,0 +1,13 @@
+2. 🔍 CodeSentinel — Autonomous Code Review Agent with Security Vulnerability Detection
+The Real Problem: Startups merge code with security holes daily because manual reviews are slow and static tools like SonarQube miss context-aware vulnerabilities.
+What You Build:
+A GitHub App that autonomously reviews every PR — not just for style, but for logic flaws, OWASP Top 10 vulnerabilities, performance regressions, and even suggests refactors with explanations. It posts human-readable review comments directly on the PR.
+Your Skill Stack in Action:
+
+Frontend: A React analytics dashboard showing vulnerability trends across repos over time
+Backend: Node.js webhook server that receives GitHub PR events
+AI/ML: RAG pipeline (LangChain + vector DB like Qdrant) where the agent retrieves similar vulnerable code patterns from a curated CVE database before generating its review
+MLOps: Shadow mode deployment — new model versions run silently alongside the current one, and you compare their outputs before promoting
+Cloud/DevOps: Deployed on GCP Cloud Run (scales to zero), Terraform for infra-as-code, full observability with Prometheus + Grafana
+
+Why It Stands Out: GitHub Apps are real products. The RAG + CVE database combo makes it genuinely useful, not just "LLM wrapping." The shadow deployment MLOps pattern is something mid/senior engineers implement — showcasing it as a fresher/junior is a massive differentiator.

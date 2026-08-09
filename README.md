@@ -1440,10 +1440,51 @@ Every existing tool is **reactive** — it tells you what's wrong after you writ
 
 *Documentation generated for CodeSentinel v1.0 · Built by [Your Name] · Full source: github.com/your-handle/codesentinel*
 
------------------------
------------------------
+---
 
 # Codemap
+
+---
+
+1. GitHub Repository Intelligence
+
+"Understand any GitHub repository in seconds."
+
+Problem
+
+Developers spend hours understanding unfamiliar repositories.
+
+Frontend Challenges:
+
+- Interactive repository graph
+- Folder visualization
+- AI chat
+- Code dependency graph
+- Timeline
+- Infinite virtualized files
+- Monaco Editor
+- Beautiful animations
+
+Features:
+
+- Drag-drop GitHub URL
+- AI explains architecture
+- Component relationship graph
+- Search code semantically
+- Commit timeline
+- Code ownership
+- API explorer
+- Dependency visualization
+
+Tech
+
+- React
+- React Flow
+- Monaco
+- Framer Motion
+- TanStack Query
+
+---
 
 An AI tool that helps you understand any GitHub repository quickly — its architecture, folder structure, and how the code connects together.
 

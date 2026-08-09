@@ -1,4 +1,5 @@
 # CodeSentinel
+
 ## Autonomous Code Review Agent with Security Vulnerability Detection
 
 > **Version:** 1.0.0 · **Type:** GitHub App + SaaS Platform · **Stack:** Node.js · FastAPI · Next.js · Qdrant · PostgreSQL · Docker · GCP
@@ -60,6 +61,7 @@ Startups and engineering teams merge code with security vulnerabilities daily. T
 **Manual code review is a bottleneck.** Senior engineers who can spot a subtle SQL injection or a SSRF vulnerability are reviewing 15 PRs a day. Security review depth degrades under time pressure. On a team of 10 engineers shipping fast, the security review is the first thing that gets shortcut.
 
 **Static analysis tools are blind to context.** Tools like SonarQube, Semgrep, and Snyk catch known patterns — they are essentially regex over an AST. They don't understand:
+
 - Whether this specific API endpoint is exposed to the public internet or internal only
 - Whether the JWT validation logic *downstream* compensates for a weak check *upstream*
 - Whether a rate-limit bypass in isolation is exploitable given the specific auth model of this codebase
@@ -78,7 +80,7 @@ Startups and engineering teams merge code with security vulnerabilities daily. T
 ## 3. Why Existing Tools Fail
 
 | Tool | What it does | Why it's insufficient |
-|------|-------------|----------------------|
+| ------ | ------------- | ---------------------- |
 | **SonarQube** | Static AST analysis, code smell detection | Pattern-matching only; zero LLM context; no CVE-backed reasoning; high false positives |
 | **Snyk** | Dependency vulnerability scanning | Only scans `package.json` / `requirements.txt`; misses logic-layer vulnerabilities entirely |
 | **Semgrep** | Rule-based pattern matching | Requires writing custom rules; no natural language reasoning; enterprise pricing for teams |
@@ -175,7 +177,7 @@ CodeSentinel is a **microservices architecture** with four core services:
 ### Service Responsibilities
 
 | Service | Language | Responsibility |
-|---------|----------|---------------|
+| --------- | ---------- | --------------- |
 | **Webhook Server** | Node.js / TypeScript | Receives GitHub webhooks, validates signatures, enqueues analysis jobs |
 | **Analysis Engine** | Python / FastAPI | Orchestrates diff parsing, RAG retrieval, LLM calls, findings structuring |
 | **Dashboard API** | Node.js / Express | Serves analytics data to frontend |
@@ -189,6 +191,7 @@ CodeSentinel is a **microservices architecture** with four core services:
 ### 6.1 GitHub App & Webhook Layer
 
 **GitHub App vs OAuth App:** CodeSentinel uses a GitHub App (not OAuth) because:
+
 - Installation-level permissions per repository
 - Bot identity for PR comments (`codesentinel[bot]`)
 - Webhook events scoped to specific repos without requiring user auth
@@ -373,7 +376,7 @@ The RAG (Retrieval-Augmented Generation) pipeline is the architectural decision 
 **Corpus Sources:**
 
 | Source | Update Frequency | Record Count |
-|--------|-----------------|--------------|
+| -------- | ----------------- | -------------- |
 | NVD (National Vulnerability Database) | Daily via API | ~220,000 CVEs |
 | CWE (Common Weakness Enumeration) | Monthly | ~900 weaknesses |
 | OWASP Top 10 patterns | Per release | ~200 patterns |
@@ -775,26 +778,32 @@ The Next.js dashboard surfaces org-level security intelligence that no PR-level 
 **Key Dashboard Sections:**
 
 **1. Security Score Trend**
+
 - Rolling 30/60/90-day security score per repository
 - Score benchmarking against industry average (anonymized)
 
 **2. Vulnerability Heatmap**
+
 - Files/directories sorted by historical vulnerability density
 - Identifies the "riskiest corners" of the codebase
 
 **3. OWASP Category Breakdown**
+
 - Pie/bar chart of findings by OWASP category
 - Helps engineering leaders prioritize security training
 
 **4. Author Analysis**
+
 - Aggregate (not punitive) view of which team members introduce which vulnerability types
 - Used for targeted training, not blame
 
 **5. Fix Rate Tracking**
+
 - What % of CodeSentinel findings are actually fixed before merge?
 - Trend over time shows improving (or declining) security culture
 
 **6. Shadow Model Comparison**
+
 - Admin view: production vs shadow model finding comparison
 - Promotion readiness dashboard
 
@@ -860,7 +869,7 @@ scrape_configs:
 **Key Metrics Tracked:**
 
 | Metric | Type | Description |
-|--------|------|-------------|
+| -------- | ------ | ------------- |
 | `cs_pr_analysis_duration_seconds` | Histogram | End-to-end analysis latency |
 | `cs_llm_tokens_used_total` | Counter | LLM token consumption (cost tracking) |
 | `cs_findings_by_severity_total` | Counter | Finding volume by severity |
@@ -876,7 +885,7 @@ scrape_configs:
 ### Backend
 
 | Component | Technology | Justification |
-|-----------|-----------|---------------|
+| ----------- | ----------- | --------------- |
 | Webhook Server | Node.js + TypeScript | Native GitHub Octokit SDK; async event handling |
 | Analysis Engine | Python + FastAPI | LLM/ML ecosystem is Python-native; async support |
 | Job Queue | Redis + BullMQ | Reliable job processing with retry logic; dashboard UI available |
@@ -888,7 +897,7 @@ scrape_configs:
 ### Frontend
 
 | Component | Technology |
-|-----------|-----------|
+| ----------- | ----------- |
 | Framework | Next.js 15 + App Router |
 | Language | TypeScript |
 | Charts | Recharts |
@@ -899,7 +908,7 @@ scrape_configs:
 ### Infrastructure
 
 | Component | Technology |
-|-----------|-----------|
+| ----------- | ----------- |
 | Container Runtime | Docker + Docker Compose (dev) |
 | Cloud Provider | GCP |
 | Deployment | Cloud Run (webhook + analysis engine) |
@@ -1019,7 +1028,7 @@ CREATE TABLE organizations (
 ### Dashboard API
 
 | Method | Path | Description |
-|--------|------|-------------|
+| -------- | ------ | ------------- |
 | `GET` | `/api/repos` | List repos for authenticated org |
 | `GET` | `/api/repos/:id/prs` | PR list with security scores |
 | `GET` | `/api/repos/:id/findings` | Aggregate findings with filters |
@@ -1072,7 +1081,7 @@ CREATE TABLE organizations (
 ### GitHub App Permissions (Principle of Least Privilege)
 
 | Permission | Level | Reason |
-|-----------|-------|--------|
+| ----------- | ------- | -------- |
 | `pull_requests` | Read + Write | Read diff, post review comments |
 | `contents` | Read | Read file content for context |
 | `metadata` | Read | Repository metadata |
@@ -1091,7 +1100,7 @@ CREATE TABLE organizations (
 ### Threat Model
 
 | Threat | Mitigation |
-|--------|-----------|
+| -------- | ----------- |
 | Webhook spoofing | HMAC-SHA256 signature verification on every request |
 | LLM prompt injection via malicious code | System prompt clearly scopes model role; findings are JSON-structured not free text |
 | CVE corpus poisoning | NVD data fetched only from official NIST endpoint over HTTPS; content hashed |
@@ -1289,6 +1298,7 @@ New Prompt / Model Version
 ## 14. Feature Roadmap
 
 ### MVP (Month 1–2)
+
 - [x] GitHub App with PR webhook handling
 - [x] Diff parsing and chunking
 - [x] Basic RAG pipeline with OWASP Top 10 corpus
@@ -1297,6 +1307,7 @@ New Prompt / Model Version
 - [x] PostgreSQL findings storage
 
 ### v1.1 (Month 3–4)
+
 - [ ] Full NVD CVE corpus ingestion (220K+ records)
 - [ ] Shadow deployment infrastructure
 - [ ] Analytics dashboard (security score, OWASP breakdown)
@@ -1304,6 +1315,7 @@ New Prompt / Model Version
 - [ ] Multi-language support (Python, Go, Rust, Java)
 
 ### v1.2 (Month 5–6)
+
 - [ ] Grafana monitoring dashboard
 - [ ] Stripe billing integration (SaaS launch)
 - [ ] GitHub Actions native integration (run on CI)
@@ -1311,6 +1323,7 @@ New Prompt / Model Version
 - [ ] GitLab support
 
 ### v2.0 (Month 7–12)
+
 - [ ] On-premise deployment (enterprise, no code leaves network)
 - [ ] Custom ruleset editor (org-specific patterns)
 - [ ] Jira/Linear ticket auto-creation for critical findings
@@ -1322,13 +1335,14 @@ New Prompt / Model Version
 ## 15. Revenue Model
 
 | Plan | Price | Included |
-|------|-------|---------|
+| ------ | ------- | --------- |
 | **Free** | $0/mo | 1 repo, 50 PRs/month, community support |
 | **Starter** | $29/mo | 5 repos, unlimited PRs, email support |
 | **Pro** | $99/mo | 25 repos, shadow deployment dashboard, Slack alerts |
 | **Enterprise** | $499+/mo | Unlimited repos, on-prem option, SSO, SLA, custom rules |
 
 **Unit economics (target Year 2):**
+
 - 500 Starter customers = $14,500/mo
 - 150 Pro customers = $14,850/mo
 - 20 Enterprise = $10,000/mo
@@ -1339,7 +1353,7 @@ New Prompt / Model Version
 ## 16. Competitive Analysis
 
 | | CodeSentinel | SonarQube | Snyk | GitHub Advanced Security |
-|--|--|--|--|--|
+| -- | -- | -- | -- | -- |
 | LLM-powered context understanding | ✅ | ❌ | ❌ | ❌ |
 | CVE-grounded RAG pipeline | ✅ | ❌ | Partial | ❌ |
 | Inline PR comments | ✅ | ✅ | ✅ | ✅ |
@@ -1425,3 +1439,599 @@ Every existing tool is **reactive** — it tells you what's wrong after you writ
 ---
 
 *Documentation generated for CodeSentinel v1.0 · Built by [Your Name] · Full source: github.com/your-handle/codesentinel*
+
+-----------------------
+-----------------------
+
+# Codemap
+
+An AI tool that helps you understand any GitHub repository quickly — its architecture, folder structure, and how the code connects together.
+
+## The problem
+
+Whenever you join a new project or open a large repo for the first time, it takes days to understand:
+
+- Where does the project start?
+- How is authentication handled?
+- Which file does what?
+- Which function calls which?
+- Where is the business logic?
+
+Normally you spend hours going file by file, searching, and asking seniors just to get a basic understanding of the codebase.
+
+## What Codemap does
+
+You give it a GitHub repo link, and it:
+
+1. Clones and analyzes the repository
+2. Parses the code and builds a graph of how functions and files are connected
+3. Generates a simple explanation of the architecture (with a diagram)
+4. Lets you chat with the repo — ask questions like "how does login work" and get an answer based on the actual code
+
+## Current scope (v1)
+
+This project is still in progress. Right now I am focusing on these core parts only, instead of trying to build everything at once:
+
+- Repo analyzer (clone + folder structure + basic summary)
+- Code parser using Tree-sitter (JS/TS support first)
+- Knowledge graph of functions and files
+- RAG-based chat over the codebase
+- AI-generated architecture explanation
+
+Features like security scanning, commit history analysis, API docs generation, etc. are ideas for later and are not part of v1.
+
+## Tech stack
+
+- **Frontend:** React, TypeScript, Tailwind, React Flow (for graphs)
+- **Backend:** Node.js / Express
+- **Parsing:** Tree-sitter
+- **Database:** PostgreSQL + pgvector (for embeddings)
+- **AI:** LLM + RAG pipeline for chat and explanations
+
+## How it works (basic flow)
+
+```text
+GitHub URL
+  -> Clone repo
+  -> Parse code (AST)
+  -> Build knowledge graph
+  -> Generate embeddings
+  -> Store in vector DB
+  -> User asks question / views architecture
+  -> LLM answers using graph + embeddings as context
+```
+
+## Frontend
+
+```text
+┌──────────────────────────────────────────────┐
+│ Top Bar                                     │
+├─────────────┬───────────────────────────────┤
+│ Repo Tree   │ Knowledge Graph               │
+│             │                               │
+│             │                               │
+├─────────────┼───────────────────────────────┤
+│ AI Chat     │ Code Preview / Docs / Graphs  │
+└─────────────┴───────────────────────────────┘
+```
+
+## AI + Backend Pipeline
+
+```text
+ GitHub URL
+        │
+        ▼
+Clone Repository
+        │
+        ▼
+Language Detection
+        │
+        ▼
+Parser (AST)
+        │
+        ▼
+Dependency Analysis
+        │
+        ▼
+Knowledge Graph
+        │
+        ▼
+Embeddings + Vector DB
+        │
+        ▼
+LLM + RAG
+        │
+        ▼
+Frontend Dashboard
+```
+
+## Why I'm building this
+
+Understanding a new codebase is a problem every developer faces, and existing tools either don't go deep enough into the actual code structure or are not built for this specific use case. I wanted to build something that actually parses and understands code relationships, not just summarizes text.
+
+## User Flow
+
+```text
+Homepage
+
+↓
+
+Login
+
+↓
+
+Dashboard
+
+↓
+
+Connect GitHub
+
+↓
+
+Select Repository
+
+↓
+
+Analyze
+
+↓
+
+Chat
+
+↓
+
+Save Workspace
+```
+
+## Dashboard
+
+```text
+Krish
+
+Repositories
+
+-------------------
+
+Faradai
+
+AgentMesh
+
+Witness
+
+Next.js
+
+React
+```
+
+## User Workspace
+
+- AI chats
+- analysis
+- diagrams
+- bookmarks
+- notes
+
+save
+
+```text
+Workspace
+
+↓
+
+Repository
+
+↓
+
+Chats
+
+↓
+
+Graphs
+
+↓
+
+Notes
+
+↓
+
+Bookmarks
+```
+
+## Modules
+
+1. Authentication
+
+Login options
+
+- GitHub OAuth
+- Google
+- Email
+
+1. Repository Analyzer
+
+- User will paste github repo link
+eg: <https://github.com/vercel/next.js>
+
+System will automatically
+
+- clone repo
+- parse
+- index
+- summarize
+
+output:
+
+```text
+Repository Name
+
+Tech Stack
+
+Framework
+
+Languages
+
+Folder Structure
+
+Packages
+
+README Summary
+
+Contributors
+
+License
+
+Stars
+
+Forks
+```
+
+## Database Architecture
+
+```text
+                    Client
+                      │
+                      ▼
+                 Express Backend
+                      │
+        ┌─────────────┼──────────────┐
+        ▼             ▼              ▼
+   PostgreSQL      Redis         Qdrant
+(Relational)      (Cache/Jobs)  (Embeddings)
+        │
+        ▼
+ Object Storage (S3/MinIO)
+```
+
+### PostreSQL store
+
+- Users
+- Organizations
+- Repositories
+- Analysis Metadata
+- Chats
+- Billing
+- Permissions
+
+### Redis store
+
+- Sessions
+- Cache
+- Queue
+- Rate limiting
+- Pub/Sub
+- Background jobs
+
+### Qdrant store
+
+- Code embeddings
+- Documentation embeddings
+- README embeddings
+- AI search
+
+### S3 / MinIO store
+
+- Repository snapshots
+- Generated diagrams
+- Exported reports
+- Large JSON
+- Images
+
+### Multi-Tenant Design
+
+```text
+Organization
+
+      │
+
+Users
+
+      │
+
+Projects
+
+      │
+
+Repositories
+
+      │
+
+Analyses
+```
+
+Every record belongs to an organization.
+
+### Schema
+
+1. users
+
+```sql
+id (UUID)
+
+github_id
+
+email
+
+username
+
+avatar_url
+
+provider
+
+status
+
+created_at
+
+updated_at
+
+last_login
+```
+
+### Relations
+
+```text
+User
+
+↓
+
+Organizations
+
+↓
+
+Repositories
+
+↓
+
+Chats
+```
+
+1. organizations
+
+```sql
+id
+
+name
+
+slug
+
+logo
+
+plan
+
+owner_id
+
+created_at
+```
+
+1. organization_members
+
+```sql
+id
+
+organization_id
+
+user_id
+
+role
+
+joined_at
+```
+
+Role:
+
+```text
+Owner
+
+Admin
+
+Developer
+
+Viewer
+```
+
+1. repositories
+
+```sql
+id
+
+organization_id
+
+provider
+
+repo_name
+
+full_name
+
+visibility
+
+default_branch
+
+language
+
+stars
+
+forks
+
+github_id
+
+last_synced
+
+status
+```
+
+status:
+
+```text
+Pending
+
+Cloning
+
+Indexing
+
+Ready
+
+Failed
+```
+
+1. repository_branches
+
+```sql
+id
+
+repository_id
+
+branch_name
+
+is_default
+
+latest_commit
+```
+
+1. repository_analysis
+
+```sql
+id
+
+repository_id
+
+analysis_version
+
+summary
+
+architecture_summary
+
+tech_stack
+
+complexity_score
+
+health_score
+
+security_score
+
+created_at
+```sql
+
+1. files
+```
+
+id
+
+repository_id
+
+path
+
+extension
+
+language
+
+size
+
+hash
+
+last_commit
+
+is_generated
+
+embedding_status
+
+```sql
+
+1.folders
+```
+
+id
+
+repository_id
+
+path
+
+summary
+
+parent_folder
+
+1. functions
+
+```sql
+id
+
+file_id
+
+name
+
+signature
+
+return_type
+
+visibility
+
+line_start
+
+line_end
+
+complexity
+```
+
+1. classes
+
+```sql
+id
+
+file_id
+
+class_name
+
+extends
+
+implements
+
+summary
+```
+
+1. dependencies
+
+```sql
+id
+
+repository_id
+
+source
+
+target
+
+dependency_type
+```
+
+Example
+
+UserService
+
+↓
+
+UserRepository
+
+## Status
+
+Actively building. This README will be updated as more parts get built.
+
+## Author
+
+Built by Krish.

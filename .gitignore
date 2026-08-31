@@ -21,7 +21,7 @@ str.txt
 # Coverage directory used by tools like istanbul
 coverage
 *.lcov
-
+*.txt
 # nyc test coverage
 .nyc_output
 
